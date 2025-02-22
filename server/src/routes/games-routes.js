@@ -20,12 +20,27 @@ router.get('/',  async (req, res) => {
 router.get('/:id', async (req, res) => {
     try{
         const response = await axios.get(`${BASE_URL}/${req.params.id}?key=${RAWG_API_KEY}`);
-        res.json(resoponse.data.results);
+        res.json(response.data.results);
     } catch (error) {
         res.status(500).json({error: 'failed to get game by id'});
     }
 });
 
-router.get('/name')
+//route to get game by name
+router.get('/search/:name', async (req, res) => {
+    try{
+        const gameName = req.params.name;
+        const response = await axios.get(`${BASE_URL}?key=${RAWG_API_KEY}&search=${gameName}`);
+        if(response.data.results.length > 0){
+            res.json(response.data.results);
+        } else {
+            res.status(404).json({error: 'game not found'})
+        }
+        
+    } catch (error) {
+        console.error(error)
+        res.status(500).json({error: 'failed to find game'})
+    }
+});
 
 module.exports = router;
